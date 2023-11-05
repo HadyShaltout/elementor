@@ -1,4 +1,5 @@
 import { Box, Skeleton } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import ScreenshotContainer from './screenshot-container';
 import ScreenshotUnavailable from './screenshot-unavailable';
 
@@ -16,7 +17,7 @@ const Screenshot = ( { url, isLoading = false, isSelected = false, isPlaceholder
 				animation="wave"
 				variant="rounded"
 				height={ SCREENSHOT_HEIGHT }
-				sx={ { borderRadius: ( { border } ) => border.size.md, ...sx } }
+				sx={ sx }
 			/>
 		);
 	}

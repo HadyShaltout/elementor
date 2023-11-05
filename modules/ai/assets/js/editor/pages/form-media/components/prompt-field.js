@@ -1,4 +1,5 @@
 import { InputAdornment } from '@elementor/ui';
+import PropTypes from 'prop-types';
 import Textarea from '../../../components/textarea';
 import EnhanceButton from './enhance-button';
 import usePromptEnhancer from '../../../hooks/use-prompt-enhancer';
@@ -33,7 +34,7 @@ const PromptField = ( { disabled, onChange, ...props } ) => {
 			} }
 			sx={ {
 				'& .MuiInputBase-input.MuiOutlinedInput-input.MuiInputBase-inputMultiline': {
-					pb: 9,
+					pb: 5,
 					width: '89%',
 				},
 			} }
