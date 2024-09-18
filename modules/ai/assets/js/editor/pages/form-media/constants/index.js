@@ -9,6 +9,7 @@ export const LOCATIONS = {
 	REMOVE_BACKGROUND: 'remove-background',
 	REPLACE_BACKGROUND: 'replace-background',
 	REMOVE_TEXT: 'remove-text',
+	CLEANUP: 'cleanup',
 };
 
 export const IMAGE_PROMPT_SETTINGS = {
@@ -33,6 +34,8 @@ export const IMAGE_PROMPT_CATEGORIES = {
 			macro: __( 'Macro', 'elementor' ),
 			portrait: __( 'Portrait', 'elementor' ),
 			'long-exposure': __( 'Long Exposure', 'elementor' ),
+			product: __( 'Product', 'elementor' ),
+			photorealistic: __( 'Photorealistic', 'elementor' ),
 		},
 	},
 	background: {
@@ -122,4 +125,8 @@ export const IMAGE_ASPECT_RATIO = {
 		height: 704,
 		label: __( 'Portrait', 'elementor' ) + ' (9:16)',
 	},
+};
+
+export const IMAGE_PLACEHOLDERS_HOSTS = {
+	WIREFRAME: 'gene-\\d+\\.live\\.strattic\\.io',
 };
