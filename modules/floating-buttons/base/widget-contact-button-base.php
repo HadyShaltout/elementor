@@ -29,13 +29,23 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 	}
 
 	public function get_style_depends(): array {
+		$widget_name = $this->get_name();
+
 		$style_depends = Plugin::$instance->experiments->is_feature_active( 'e_font_icon_svg' )
 			? parent::get_style_depends()
 			: [ 'elementor-icons-fa-solid', 'elementor-icons-fa-brands', 'elementor-icons-fa-regular' ];
 
-		$style_depends[] = 'widget-floating-buttons';
+		$style_depends[] = 'widget-contact-buttons-base';
+
+		if ( 'contact-buttons' !== $widget_name ) {
+			$style_depends[] = "widget-{$widget_name}";
+		}
 
 		return $style_depends;
+	}
+
+	public function has_widget_inner_wrapper(): bool {
+		return ! Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	public function hide_on_search(): bool {
@@ -407,9 +417,6 @@ abstract class Widget_Contact_Button_Base extends Widget_Base {
 			[
 				'label' => esc_html__( 'Link', 'elementor' ),
 				'type' => Controls_Manager::URL,
-				'default' => [
-					'is_external' => true,
-				],
 				'dynamic' => [
 					'active' => true,
 				],
@@ -3113,7 +3120,6 @@ JS;
 		Plugin::$instance->controls_manager->add_custom_css_controls( $this, static::TAB_ADVANCED );
 
 		Plugin::$instance->controls_manager->add_custom_attributes_controls( $this, static::TAB_ADVANCED );
-
 	}
 
 	protected function render(): void {

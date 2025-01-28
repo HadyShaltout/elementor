@@ -7,6 +7,7 @@ use Elementor\Modules\Checklist\Steps\Create_Pages;
 use Elementor\Modules\Checklist\Steps\Setup_Header;
 use Elementor\Modules\Checklist\Steps\Add_Logo;
 use Elementor\Modules\Checklist\Steps\Step_Base;
+use Elementor\Modules\Checklist\Steps\Set_Fonts_And_Colors;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
@@ -15,7 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Steps_Manager {
 	/** @var Step_Base[] $step_instances */
 	private array $step_instances = [];
-	private static array $step_ids = [ Add_Logo::STEP_ID, Create_Pages::STEP_ID, Setup_Header::STEP_ID, Assign_Homepage::STEP_ID ];
+
+	private static array $step_ids = [
+		Add_Logo::STEP_ID,
+		Set_Fonts_And_Colors::STEP_ID,
+		Create_Pages::STEP_ID,
+		Setup_Header::STEP_ID,
+		Assign_Homepage::STEP_ID,
+	];
 
 	private Checklist_Module_Interface $module;
 
@@ -33,7 +41,7 @@ class Steps_Manager {
 	 *
 	 * @return array
 	 */
-	public function get_steps_for_frontend() : array {
+	public function get_steps_for_frontend(): array {
 		$formatted_steps = [];
 
 		foreach ( self::$step_ids as $step_id ) {
@@ -53,7 +61,7 @@ class Steps_Manager {
 		return $formatted_steps;
 	}
 
-	public function update_step( string $step_id, array $data ) : void {
+	public function update_step( string $step_id, array $data ): void {
 		$step = $this->get_step_by_id( $step_id );
 
 		if ( ! $step ) {
@@ -70,7 +78,7 @@ class Steps_Manager {
 	 *
 	 * @return void
 	 */
-	public function mark_step_as_completed( string $step_id ) : void {
+	public function mark_step_as_completed( string $step_id ): void {
 		$this->update_step( $step_id, [ Step_Base::MARKED_AS_COMPLETED_KEY => true ] );
 	}
 
@@ -81,7 +89,7 @@ class Steps_Manager {
 	 *
 	 * @return void
 	 */
-	public function unmark_step_as_completed( string $step_id ) : void {
+	public function unmark_step_as_completed( string $step_id ): void {
 		$this->update_step( $step_id, [ Step_Base::MARKED_AS_COMPLETED_KEY => false ] );
 	}
 
@@ -92,7 +100,7 @@ class Steps_Manager {
 	 *
 	 * @return void
 	 */
-	public function maybe_set_step_as_immutable_completed( string $step_id ) : void {
+	public function maybe_set_step_as_immutable_completed( string $step_id ): void {
 		$step = $this->get_step_by_id( $step_id );
 
 		if ( ! $step ) {
@@ -102,14 +110,14 @@ class Steps_Manager {
 		$step->maybe_immutably_mark_as_completed();
 	}
 
-	public function get_step_by_id( string $step_id ) : ?Step_Base {
+	public function get_step_by_id( string $step_id ): ?Step_Base {
 		return $this->step_instances[ $step_id ] ?? null;
 	}
 
 	/**
 	 * @return array
 	 */
-	public function get_step_config( $step_id ) : array {
+	public function get_step_config( $step_id ): array {
 		$step_instance = $this->step_instances[ $step_id ];
 
 		return $step_instance
@@ -133,7 +141,7 @@ class Steps_Manager {
 	 *
 	 * @return void
 	 */
-	private function register_steps() : void {
+	private function register_steps(): void {
 		foreach ( self::$step_ids as $step_id ) {
 			$step_instance = $this->get_step_instance( $step_id );
 
@@ -148,18 +156,18 @@ class Steps_Manager {
 	 *
 	 * @return array
 	 */
-	public static function get_step_ids() : array {
+	public static function get_step_ids(): array {
 		return self::$step_ids;
 	}
 
 	/**
-	 * Using step data->id, instanciates and returns the step class or null if the class does not exist
+	 * Using step data->id, instantiates and returns the step class or null if the class does not exist
 	 *
 	 * @param $step_data
 	 *
 	 * @return Step_Base|null
 	 */
-	private function get_step_instance( string $step_id ) : ?Step_Base {
+	private function get_step_instance( string $step_id ): ?Step_Base {
 		$class_name = '\\Elementor\\Modules\\Checklist\\Steps\\' . $step_id;
 
 		if ( ! class_exists( $class_name ) ) {
@@ -167,7 +175,7 @@ class Steps_Manager {
 		}
 
 		/** @var Step_Base $step */
-		return new $class_name( $this->module, $this->module->get_wordpress_adapter() );
+		return new $class_name( $this->module, $this->module->get_wordpress_adapter(), $this->module->get_elementor_adapter() );
 	}
 
 	private function filter_steps() {
@@ -176,6 +184,10 @@ class Steps_Manager {
 
 		foreach ( $filtered_steps as $step_id => $step_instance ) {
 			if ( ! $step_instance instanceof Step_Base ) {
+				continue;
+			}
+
+			if ( ! $step_instance->is_visible() ) {
 				continue;
 			}
 
